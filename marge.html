@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+    </body>
+    <script src="js/jquery-1.12.4.min.js"></script>
+    <script src="mylib/tool.js"></script>
+    <script>
+
+        var dd = $.extend(true, {dd:3}, 'sdf');
+        
+
+    	var o1 = {
+
+            ff : 34,
+            cc : {
+                x : 'sdf',
+                y : {
+                    sd : 55
+                }
+            },
+            aa : {
+
+            },
+
+            dd : [
+                1,
+                {
+                    dsf : 00,
+                    dd : 66
+                }
+
+            ]
+
+        },
+        o2 = {
+
+            ff : 2,
+            cc : {
+                x : 2,
+                y : ''
+            },
+            aa :{
+                df : 'sdf',
+                dd : {
+                    2 : 3
+                }
+            },
+            dd : [
+                2,
+                {
+                    dd : 99
+                }
+            ]
+
+        };
+
+
+
+        marge(o1,o2,1);
+
+        console.log(o2);
+
+
+        function margeFn(v1,v2,depth){
+            
+        }
+
+
+
+        function marge(o1,o2,depth){
+
+            var depth = !!depth,
+                src,
+                clone,
+                isArr,
+                copy,
+                key;
+
+            if(!type(o1,'object') || !type(o2,'object')){
+                return;
+            }
+
+            //两个对象合并
+            
+            if(depth){
+
+                for(key in o2){
+                    if(hasOwnProperty(key)){    
+                        
+                        src = o1[key];
+                        copy = o2[key];
+
+                        if( src === copy ){
+                            continue;
+                        }
+                        else if( depth && ( isObject(copy) || (isArr = isArray(copy)) ) ){
+
+                            if(isArr){
+                                isArr = false;
+                                clone = isArray(src) ? src : [];
+                            }
+                            else{
+                                clone = isObject(src) ? src : {};
+                            }
+
+                            o1 = marge(src,clone,1);
+
+                        }
+                        else{
+                            o1[key] = copy;
+                        }
+
+                    }
+                }
+
+            }
+            else{
+
+                for(key in o2){
+
+                    //不合并原型上的属性
+                    if(o2.hasOwnProperty(key)){
+                        o1[key] = o2.key;
+                    }
+                    
+
+                }
+
+
+            }
+            
+
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+</html>

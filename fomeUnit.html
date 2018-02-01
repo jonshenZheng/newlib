@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body>
+
+		<form action="" id="form">
+
+			<input type="hidden" name="a1"  value="a1" />
+
+			<input type="text" name="a2" />
+
+			<p>
+				<label><input type="radio"  name="a3"  value="radio_a3_1" /> 1</label>
+				<label><input type="radio"  name="a3"  value="radio_a3_2"/> 2</label>
+				<label><input type="radio"  name="a3"  value="radio_a3_3" /> 3</label>
+			</p>
+
+			<p>
+				<label><input type="checkbox" name="a4" value="checkbox_a4_1" />1</label>
+				<label><input type="checkbox" name="a4" value="checkbox_a4_2" />2</label>
+				<label><input type="checkbox" name="a4" value="checkbox_a4_3" />3</label>
+				<label><input type="checkbox" name="a4" value="checkbox_a4_4" />4</label>
+			</p>
+
+			<p>
+				<label><input type="radio"  name="a5"  value="radio_a5_1" /> 1</label>
+				<label><input type="radio"  name="a5"  value="radio_a5_2"/> 2</label>
+				<label><input type="radio"  name="a5"  value="radio_a5_3" /> 3</label>
+				<label><input type="radio"  name="a5"  value="radio_a5_4" />4</label>
+			</p>
+
+			<p>
+				<label><input type="checkbox" name="a6" value="checkbox_a6_1" />1</label>
+				<label><input type="checkbox" name="a6" value="checkbox_a6_2" />2</label>
+				<label><input type="checkbox" name="a6" value="checkbox_a6_3" />3</label>
+			</p>
+
+			<input type="password" name="a7" />
+
+			<textarea id="" cols="30" rows="10" name="a8"></textarea>
+
+			<select name="a9">
+				<option value="a9_1"></option>
+				<option value="a9_2"></option>
+				<option value="a9_3"></option>
+			</select>
+
+			<input type="hidden" name="a10"  value="a10" />
+
+			<input type="text" name="a11" />
+
+			<input type="password" />
+
+
+		</form>
+
+		<script src="js/jquery-1.9.1.js"></script>
+
+		<script>
+
+
+			var key = getFormVal('form');
+
+			console.log(key);
+
+
+			function toRealArr(arr){
+				
+
+
+				
+			}
+
+
+
+
+			function getFormVal(el_id,type){
+
+				var form_el,
+					findlist,
+					nameEl,
+					temp_name,
+					miultEl = [],
+					valEl;
+
+
+				if(!el_id){
+					return '';
+				}
+
+				form_el = document.getElementById(el_id);
+
+				if(!form_el){
+					return '';
+				}
+
+				//不考虑顺序
+				
+				//findlist = ['input','textarea','select']
+				findlist = ';INPUT;TEXTAREA;SELECT;';
+
+				valEl = [];
+
+				//没做兼容 ,目前只有想到遍历每个节点来筛选要的节点，需要找JQ看看他们的实现方法
+				if(document.querySelectorAll){
+					nameEl = form_el.querySelectorAll('[name]');
+				}
+
+				
+				/*筛选是表单元素*/
+				var nameEl_len = nameEl.length;
+
+				if(nameEl_len < 1){
+					return '';
+				}
+				
+				for (;nameEl_len--;) {
+					
+					if( findlist.indexOf( ';'+nameEl[nameEl_len].nodeName+';' ) != -1 ){
+						//把radio和checkbox单独处理
+						//
+						if( nameEl[nameEl_len].type && (nameEl[nameEl_len].type === 'radio' || nameEl[nameEl_len].type === 'checkbox' ) ){
+							temp_name = nameEl[nameEl_len].name;
+							if(!miultEl[name]){
+								miultEl[name] = nameEl[nameEl_len];
+							}
+						}
+						else{
+							valEl.push(nameEl[nameEl_len]);
+						}
+						
+					}
+
+				};
+
+
+				valEl = filterValEle(true,['a3'],valEl);
+
+				return getEleKeyVal(valEl);
+
+			}	
+
+
+			function objectToString(o){
+				
+				if( Object.prototype.toString.call(o) !== '[object Object]' ){
+					return '';
+				}
+
+				var s = '',
+					k;
+				//原型上值的要加进去？	
+				for(k in o){
+					s += ''+k+'='+o[k]+'&';
+				}
+
+				return s.slice(0,-1);
+
+			}
+
+			function getEleKeyVal(el,type){
+
+				var o = {},
+					ty = type || 'json',
+				    key,
+					len = el.length;
+
+				for(;len--;){
+					key = el[len].name;
+					o[key] = el[len].value;
+				}
+
+				switch(ty){
+					case 'json': return JSON.stringify(o);
+						break;
+					case 'string': return objectToString(o);
+						break;
+				}
+
+			}
+
+			function filterValEle(isNoHidden,filterName_arr,el){
+
+				var temp = [],
+					arr = [],
+					len = el.length,
+					filterName;
+
+				if(isNoHidden){
+					for(;len--;){
+						if(el[len].type != 'hidden'){
+							//优化成先收集要去除的节点，再一起删除
+							temp.push(el[len]);
+						}
+					}
+				}
+				else{
+					temp = el;
+				}
+
+				if( Object.prototype.toString.call(filterName_arr) === '[object Array]' ){
+
+					if(filterName_arr.length < 1){
+						return temp;
+					}
+
+					filterName = ';'+filterName_arr.join(';')+';';
+
+					len =  temp.length;
+
+					for(; len-- ;){
+						if( filterName.indexOf( ';'+temp[len].name+';' ) === -1 ){
+							//优化成先收集要去除的节点，再一起删除
+							arr.push(temp[len]);
+						}
+					}
+
+					return arr;
+
+				}
+				else{
+					return temp;
+				}
+
+
+			}
+
+
+
+
+
+
+
+
+
+
+
+		</script>
+
+
+		<script>
+
+			var o1 = {
+
+					ff : 34,
+					cc : {
+						x : 'sdf',
+						y : {
+							sd : 55
+						}
+					},
+					aa : {
+
+					},
+
+					dd : [
+						1,
+						{
+							dsf : 00,
+							dd : 66
+						}
+
+					]
+
+				},
+				o2 = {
+
+					ff : 2,
+					cc : {
+						x : 2,
+						y : ''
+					},
+					aa :{
+						df : 'sdf',
+						dd : {
+							2 : 3
+						}
+					},
+					dd : [
+						2,
+						{
+							dd : 99
+						}
+					]
+
+
+				}
+
+
+
+
+			function ff(){}
+
+
+
+
+
+
+
+			function _MagerObject(o1,o2,isEXT){
+
+				if( Object.prototype.toString.call(o1) !== '[object Object]' || Object.prototype.toString.call(o2) !== '[object Object]' ){
+			        return;
+			    }
+
+			    var key;
+			    
+			    for (key in opts) {
+
+			        if(opts.hasOwnProperty(key)){
+
+			            if( Object.prototype.toString.call(key) === '[object Aarray]'){
+			                var len = key.length;
+
+			                for(;len--;){
+			                    if(optParm[key][len]){
+			                        opts[key][len] = optParm[key][len];
+			                    }
+			                }
+			            }
+			            else if(optParm[key] || optParm[key] === 0){
+			                opts[key] = optParm[key];
+			            }
+
+			        }
+			    }
+
+			}
+
+			/**
+			 * 扩展或覆盖原有的值
+			 * @param {[Object]}  opts    [要拓展的对象]
+			 * @param {[Object]}  optParm [提供拓展属性的对象，可以有多个对象提供拓展属性]
+			 * @param {Boolean} isEXT   [值为true时，扩展所有传进来的对象]
+			 */
+			function MagerObject(opts,optParm,isEXT){
+
+				var isextObj = false,
+					depth;
+
+
+				function setIsextObj(val){
+					if(!!val){
+						isextObj = true;
+					}
+				}
+
+				if(arguments.length <= 1){
+					return;
+				}
+				else if(arguments.length = 3 ){
+					setIsextObj(arguments[2]);
+
+				}
+				else if(arguments.length > 3){
+					setIsextObj(arguments[arguments.length-1]);
+				}
+
+			    return opts;
+
+
+			}
+
+
+
+			
+				
+
+
+		</script>
+		
+
+
+
+
+
+
+    </body>
+</html>
