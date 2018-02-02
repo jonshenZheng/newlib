@@ -6,6 +6,15 @@ function isObject(v){
 	return type(v,'object');
 }
 
+//格式化字符串，去掉首尾空格，中两个以上的空格全部变为一个空格
+function formatCName(str){
+	return str.replace(RegexpObj.trim,'').replace(RegexpObj.oneSpace,' ');
+}
+//去首尾空格
+function trim(str){
+	return str.replace(RegexpObj.trim,'');
+}
+
 /*常用方法end*/
 
 
@@ -25,7 +34,6 @@ var RegexpObj = {
     phone : /^1[13456789][0-9]{9}$/,             //匹配手机号
     telephone : /^0\d{2,3}-?\d{7,8}$/,          //匹配固话（必须加区号） 
 };
-
 
 
 
@@ -95,8 +103,59 @@ var FormMethod = {
 		body_dom.removeChild(form_dom);
 
 	},
- 
+ 	/*选中下拉框的值 el为jsDom对象 重置要用下面的resetForm,因为js加入选中的属性所有reset不了这些设置过的属性,selectSelectJq用jq来做，setAttribute不兼容ie6~8*/
+ 	selectSelectJq : function(el_jq,sel_vue){
+ 		el_jq.find.('option:contains(sel_vue)').attr('selected','true');
+ 	},
+ 	/* selectSelectJq、resetForm功能暂未测试*/
+ 	resetForm : function(el_jq){
+ 		var $form = el_jq.parents('form'),
+ 			$select = $form.find('select'),
+ 			$checkbox = $form.find('checkbox'),
+ 			$radio = $form.find('radio'),
+ 			arr = [$select,$checkbox,$radio],
+ 			i = 3,
+ 			temp,
+ 			name,
+ 			len;
 
+ 		for(;i--;){
+
+ 			temp = arr[i];
+ 			len = temp.length;
+ 			if(!len){
+ 				continue;
+ 			}
+
+ 			name = len === 0 ? 'selected' : 'checked';
+
+ 			for(;len--;){
+ 				temp.eq(len).removeAttr(name);
+ 			}
+
+
+ 		}
+
+
+ 	},
+ 	// selectSelect : function(el,sel_vue){
+ 	// 	var opts_dom = el.getElementsByTagName('option'),
+ 	// 		len = opts_dom.length,
+ 	// 		temp;
+
+ 	// 	if(!len){
+ 	// 		return;
+ 	// 	}
+
+ 	// 	for(;len--;){
+ 	// 		temp = opts_dom[len];
+		// 	if( temp.value === sel_vue ){
+		// 		temp.
+		// 	} 			
+ 	// 	}
+
+
+ 	// },
 	/*检查是否是中文*/
 	isChinese : function(str){
 	    var s = ''+str;
@@ -230,15 +289,6 @@ var fileMethod = {
 
 var Method = {
 
-    /*去除首尾空格*/
-    trim : function(str){
-        return str.replace(RegexpObj.trim,'');
-    },
-    /*格式化所有空格，变为一个空格*/
-    contOneSpace : function(str){
-        str = this.trim(str);
-        return str.replace(RegexpObj.oneSpace,' ');
-    },
     /*格式化数组，按分隔符链接成一个字符串*/
     formatIndSrt : function(arr,separator){
     	var sep = separator || ';';
@@ -484,21 +534,8 @@ function each(obj,callback){
 }
 
 
-function formatCName(str){
-	//格式化字符串，去掉首尾空格，中两个以上的空格全部变为一个空格
-	return str.replace(RegexpObj.trim,'').replace(RegexpObj.oneSpace,' ');
-}
-
-function trim(str){
-	return str.replace(RegexpObj.trim,'');
-}
-
-
-
-
 
 //替换Jquery中的方法
-
 function addClass(obj,cName){
 
 	function acn(CN){
