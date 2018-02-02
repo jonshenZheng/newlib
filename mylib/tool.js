@@ -105,7 +105,7 @@ var FormMethod = {
 	},
  	/*选中下拉框的值 el为jsDom对象 重置要用下面的resetForm,因为js加入选中的属性所有reset不了这些设置过的属性,selectSelectJq用jq来做，setAttribute不兼容ie6~8*/
  	selectSelectJq : function(el_jq,sel_vue){
- 		el_jq.find.('option:contains(sel_vue)').attr('selected','true');
+ 		el_jq.find.('option:contains('+sel_vue+')').attr('selected','true');
  	},
  	/* selectSelectJq、resetForm功能暂未测试*/
  	resetForm : function(el_jq){
